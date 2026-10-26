@@ -1,0 +1,32 @@
+const programs = [
+['Administración','Administración','https://administracion.uniandes.edu.co/programas/posgrados/doctorado-administracion/'],
+['Literatura','Artes y Humanidades','https://doctorados.uniandes.edu.co/programas/'],
+['Ciencias – Biología','Ciencias','https://www.uniandes.edu.co/es/programas/doctorado-en-ciencias-biologia'],
+['Ciencias – Física','Ciencias','https://fisica.uniandes.edu.co/programas/doctorado-ciencias-fisica'],
+['Química','Ciencias','https://quimica.uniandes.edu.co/programas/doctorado-en-quimica'],
+['Matemáticas','Ciencias','https://matematicas.uniandes.edu.co/es/programas/doctorado-matematicas'],
+['Estudios Interdisciplinarios sobre Desarrollo','Estudios sobre Desarrollo','https://cider.uniandes.edu.co/programas-academicos/escuela-de-posgrados/doctorado-estudios-interdisciplinarios-sobre-desarrollo/'],
+['Antropología','Ciencias Sociales','https://cienciassociales.uniandes.edu.co/antropologia/doctorado-antropologia/'],
+['Ciencia Política','Ciencias Sociales','https://cienciassociales.uniandes.edu.co/ciencia-politica-estudios-globales/doctorado-ciencia-politica/'],
+['Filosofía','Ciencias Sociales','https://cienciassociales.uniandes.edu.co/filosofia/doctorado-filosofia/'],
+['Psicología','Ciencias Sociales','https://cienciassociales.uniandes.edu.co/psicologia/doctorado-psicologia/'],
+['Historia','Ciencias Sociales','https://cienciassociales.uniandes.edu.co/historia-geografia/doctorado-historia/'],
+['Educación','Educación','https://educacion.uniandes.edu.co/es/oferta-academica/escuela-de-posgrados/doctorado-en-educacion'],
+['Economía','Economía','https://economia.uniandes.edu.co/es/programas/doctorado-en-economia'],
+['Derecho','Derecho','https://derecho.uniandes.edu.co/programas/posgrados-edco/doctorado-derecho/'],
+['Ingeniería','Ingeniería','https://ingenieria.uniandes.edu.co/es/posgrados/doctorados/doctorado-ingenieria'],
+['Gestión de la Innovación Tecnológica','Innovación Tecnológica','https://nodo.uniandes.edu.co/programas/dgit/']
+];
+const grid=document.getElementById('programGrid'),search=document.getElementById('programSearch'),faculty=document.getElementById('facultyFilter'),count=document.getElementById('programCount'),empty=document.getElementById('programEmpty');
+const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+[...new Set(programs.map(p=>p[1]))].sort((a,b)=>a.localeCompare(b,'es')).forEach(f=>{let option=document.createElement('option');option.value=f;option.textContent=f;faculty.append(option)});
+function renderPrograms(){let term=search.value.trim().toLocaleLowerCase('es'),cat=faculty.value;let filtered=programs.filter(p=>(cat==='all'||p[1]===cat)&&`${p[0]} ${p[1]}`.toLocaleLowerCase('es').includes(term));grid.innerHTML=filtered.map(([name,area,url])=>`<a class="program-card" href="${escapeHTML(url)}" target="_blank" rel="noopener"><span class="category">${escapeHTML(area)}</span><h3>Doctorado en ${escapeHTML(name)}</h3><div class="card-bottom"><span>Ver programa oficial</span><span aria-hidden="true">↗</span></div></a>`).join('');count.textContent=`${filtered.length} ${filtered.length===1?'programa':'programas'}`;empty.hidden=filtered.length>0}
+search.addEventListener('input',renderPrograms);faculty.addEventListener('change',renderPrograms);document.getElementById('clearPrograms').addEventListener('click',()=>{search.value='';faculty.value='all';renderPrograms()});renderPrograms();
+const steps=[
+{title:'Comienza con una visión',desc:'Conoce la universidad, los programas y las principales alternativas de apoyo para tu proyecto doctoral.',links:[['Conocer los 17 doctorados','https://doctorados.uniandes.edu.co/programas/'],['La Universidad','https://www.uniandes.edu.co/es/la-universidad'],['Apoyos y admisiones de posgrado','https://registroapps.uniandes.edu.co/SisAdmisiones/Posgrado/']]},
+{title:'Organiza tu recorrido',desc:'Consulta los recursos académicos y administrativos mencionados en la propuesta. Los procedimientos específicos deben validarse con cada dependencia.',links:[['Información académica','https://www.uniandes.edu.co/es/vida-academica'],['Dirección de Doctorados','https://doctorados.uniandes.edu.co/'],['Apoyo institucional','https://www.uniandes.edu.co/es/decanatura-de-estudiantes']]},
+{title:'Impulsa tu investigación',desc:'Explora información institucional para desarrollar tu proyecto y buscar oportunidades de financiación y colaboración.',links:[['Portal de Investigación y Creación','https://www.uniandes.edu.co/investigacioncreacion/'],['Boletín de Oportunidades VIC','https://airtable.com/appFE93ecdXWFmMtF/shr6vnJ3lq1KH7u6L/tblhXpdexzHIV3ctC'],['Portal doctoral','https://doctorados.uniandes.edu.co/']]},
+{title:'Expande tus conexiones',desc:'Conoce las rutas de movilidad doctoral y las opciones de cotutela o pasantía de investigación.',links:[['Movilidad doctoral','https://internacionalizacion.uniandes.edu.co/Node/4034'],['Cotutelas y convenios','https://www.uniandes.edu.co/internacionalizacion/es/profesores/convenios'],['Uniandes en el mundo','https://doctorados.uniandes.edu.co/uniandes-en-el-mundo/']]}
+];
+const panel=document.getElementById('journeyPanel'),tabs=[...document.querySelectorAll('.journey-tabs button')];function renderStep(index){const s=steps[index];panel.innerHTML=`<div><span class="journey-label">ETAPA ${String(index+1).padStart(2,'0')} / 04</span><h3>${escapeHTML(s.title)}</h3><p>${escapeHTML(s.desc)}</p></div><div class="journey-links">${s.links.map(([label,url])=>`<a href="${escapeHTML(url)}" target="_blank" rel="noopener">${escapeHTML(label)} <span aria-hidden="true">↗</span></a>`).join('')}</div>`;tabs.forEach((t,i)=>{t.setAttribute('aria-selected',String(i===index));t.tabIndex=i===index?0:-1})}tabs.forEach((t,i)=>{t.addEventListener('click',()=>renderStep(i));t.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const n=(i+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;renderStep(n);tabs[n].focus()}})});renderStep(0);
+const menu=document.getElementById('menuToggle'),nav=document.getElementById('site-nav');menu.addEventListener('click',()=>{let open=!nav.classList.contains('open');nav.classList.toggle('open',open);menu.setAttribute('aria-expanded',String(open))});nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{nav.classList.remove('open');menu.setAttribute('aria-expanded','false')}));
